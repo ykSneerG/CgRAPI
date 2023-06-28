@@ -1,0 +1,1953 @@
+{
+	"info": {
+		"_postman_id": "199c76d9-25db-4951-9792-226a739a34dc",
+		"name": "CgTest_Container",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "16041040"
+	},
+	"item": [
+		{
+			"name": "Create Jobs",
+			"item": [
+				{
+					"name": "Job 1",
+					"item": [
+						{
+							"name": "5.1 Upload file (TIF)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201)\r",
+											"{\r",
+											"    let json = pm.response.json();\r",
+											"    pm.collectionVariables.set(\"cFileID\", json.fileID);\r",
+											"    console.log(\"Job id = \", json.fileID);\r",
+											"}\r",
+											"else\r",
+											"{\r",
+											"    console.log(\"Job create failed\");\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "Visual_LFPv0x1_Px1Mio_RGB.tif"
+									}
+								},
+								"url": {
+									"raw": "{{url}}files?filename=Job01.tif",
+									"host": [
+										"{{url}}files"
+									],
+									"query": [
+										{
+											"key": "filename",
+											"value": "Job01.tif"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2 Create new job",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) ",
+											"{",
+											"    let json = pm.response.json();",
+											"    pm.collectionVariables.set(\"cJobID_01\", json.jobID);",
+											"    console.log(\"Job id = \", json.jobID);",
+											"}",
+											"else ",
+											"{",
+											"    console.log(\"Job create failed\");",
+											"}",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"queueName\": \"{{c_queueName}}\",\n    \"hotfolder\": \"{{c_hotfolder}}\",\n    \"fileID\": {{cFileID}},\n    \"settings\": {\n        \"color\": {\n            \"mim\": {\n                \"media\": \"{{c_MimMedia}}\",\n                \"ink\": \"{{c_MimInk}}\",\n                \"metaMode\": \"{{c_MimMetamode}}\"\n            }\n        },\n        \"job\": {\n            \"rotation\": \"Rotate0\"\n        }\n    }\n}"
+								},
+								"url": {
+									"raw": "{{url}}jobs",
+									"host": [
+										"{{url}}jobs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.4.1  POLL STATUS [4.2]",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"function requestTest(){\r",
+											"    pm.test(\"Status code is 200\", function () {\r",
+											"        pm.response.to.have.status(200);\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"function looping(checks, duration){\r",
+											"\r",
+											"    let json = pm.response.json(); \r",
+											"\r",
+											"    for (let i = 0; i < checks; i++){\r",
+											"        if (json.preview === true && json.status.code === 200) {\r",
+											"            requestTest();\r",
+											"            break;\r",
+											"        }\r",
+											"        else{\r",
+											"            setTimeout(() => {}, duration); \r",
+											"            postman.setNextRequest(pm.info.requestId);\r",
+											"        }\r",
+											"    }\r",
+											"}\r",
+											"\r",
+											"looping(60, 3000);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{url}}jobs/{{cJobID_01}}/status",
+									"host": [
+										"{{url}}jobs"
+									],
+									"path": [
+										"{{cJobID_01}}",
+										"status"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Job 2",
+					"item": [
+						{
+							"name": "5.1 Upload file (TIF)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201)\r",
+											"{\r",
+											"    let json = pm.response.json();\r",
+											"    pm.collectionVariables.set(\"cFileID\", json.fileID);\r",
+											"    console.log(\"Job id = \", json.fileID);\r",
+											"}\r",
+											"else\r",
+											"{\r",
+											"    console.log(\"Job create failed\");\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "Visual_LFPv0x1_Px1Mio_RGB.tif"
+									}
+								},
+								"url": {
+									"raw": "{{url}}files?filename=Job02.tif",
+									"host": [
+										"{{url}}files"
+									],
+									"query": [
+										{
+											"key": "filename",
+											"value": "Job02.tif"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2 Create new job",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) ",
+											"{",
+											"    let json = pm.response.json();",
+											"    pm.collectionVariables.set(\"cJobID_02\", json.jobID);",
+											"    console.log(\"Job id = \", json.jobID);",
+											"}",
+											"else ",
+											"{",
+											"    console.log(\"Job create failed\");",
+											"}",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"queueName\": \"{{c_queueName}}\",\n    \"hotfolder\": \"{{c_hotfolder}}\",\n    \"fileID\": {{cFileID}},\n    \"settings\": {\n        \"color\": {\n            \"mim\": {\n                \"media\": \"{{c_MimMedia}}\",\n                \"ink\": \"{{c_MimInk}}\",\n                \"metaMode\": \"{{c_MimMetamode}}\"\n            }\n        },\n        \"job\": {\n            \"rotation\": \"Rotate90\",\n            \"scaleX\" : 0.75,\n            \"scaleY\" : 0.75\n        }\n    }\n}"
+								},
+								"url": {
+									"raw": "{{url}}jobs",
+									"host": [
+										"{{url}}jobs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.4.1  POLL STATUS [4.2]",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"function requestTest(){\r",
+											"    pm.test(\"Status code is 200\", function () {\r",
+											"        pm.response.to.have.status(200);\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"function looping(checks, duration){\r",
+											"\r",
+											"    let json = pm.response.json(); \r",
+											"\r",
+											"    for (let i = 0; i < checks; i++){\r",
+											"        if (json.preview === true && json.status.code === 200) {\r",
+											"            requestTest();\r",
+											"            break;\r",
+											"        }\r",
+											"        else{\r",
+											"            setTimeout(() => {}, duration); \r",
+											"            postman.setNextRequest(pm.info.requestId);\r",
+											"        }\r",
+											"    }\r",
+											"}\r",
+											"\r",
+											"looping(60, 3000);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{url}}jobs/{{cJobID_02}}/status",
+									"host": [
+										"{{url}}jobs"
+									],
+									"path": [
+										"{{cJobID_02}}",
+										"status"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"description": "|  |  |  |\n| --- | --- | --- |\n| filename | String | The original filename without path of the uploaded file. Because the  <br>message body contains the binary data of the uploaded file this parameter  <br>can only be passed as query in the URI path. |\n\n``` html\nTEST\n\n```"
+				},
+				{
+					"name": "Job 3",
+					"item": [
+						{
+							"name": "5.1 Upload file (TIF)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201)\r",
+											"{\r",
+											"    let json = pm.response.json();\r",
+											"    pm.collectionVariables.set(\"cFileID\", json.fileID);\r",
+											"    console.log(\"Job id = \", json.fileID);\r",
+											"}\r",
+											"else\r",
+											"{\r",
+											"    console.log(\"Job create failed\");\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "Visual_LFPv0x1_Px1Mio_RGB.tif"
+									}
+								},
+								"url": {
+									"raw": "{{url}}files?filename=Job03.tif",
+									"host": [
+										"{{url}}files"
+									],
+									"query": [
+										{
+											"key": "filename",
+											"value": "Job03.tif"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2 Create new job",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) ",
+											"{",
+											"    let json = pm.response.json();",
+											"    pm.collectionVariables.set(\"cJobID_03\", json.jobID);",
+											"    console.log(\"Job id = \", json.jobID);",
+											"}",
+											"else ",
+											"{",
+											"    console.log(\"Job create failed\");",
+											"}",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"queueName\": \"{{c_queueName}}\",\n    \"hotfolder\": \"{{c_hotfolder}}\",\n    \"fileID\": {{cFileID}},\n    \"settings\": {\n        \"color\": {\n            \"mim\": {\n                \"media\": \"{{c_MimMedia}}\",\n                \"ink\": \"{{c_MimInk}}\",\n                \"metaMode\": \"{{c_MimMetamode}}\"\n            }\n        },\n        \"job\": {\n            \"rotation\": \"Rotate180\",\n            \"scaleX\" : 0.5,\n            \"scaleY\" : 0.5\n        }\n    }\n}"
+								},
+								"url": {
+									"raw": "{{url}}jobs",
+									"host": [
+										"{{url}}jobs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.4.1  POLL STATUS [4.2]",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"function requestTest(){\r",
+											"    pm.test(\"Status code is 200\", function () {\r",
+											"        pm.response.to.have.status(200);\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"function looping(checks, duration){\r",
+											"\r",
+											"    let json = pm.response.json(); \r",
+											"\r",
+											"    for (let i = 0; i < checks; i++){\r",
+											"        if (json.preview === true && json.status.code === 200) {\r",
+											"            requestTest();\r",
+											"            break;\r",
+											"        }\r",
+											"        else{\r",
+											"            setTimeout(() => {}, duration); \r",
+											"            postman.setNextRequest(pm.info.requestId);\r",
+											"        }\r",
+											"    }\r",
+											"}\r",
+											"\r",
+											"looping(60, 3000);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{url}}jobs/{{cJobID_03}}/status",
+									"host": [
+										"{{url}}jobs"
+									],
+									"path": [
+										"{{cJobID_03}}",
+										"status"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Job 4",
+					"item": [
+						{
+							"name": "5.1 Upload file (TIF)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201)\r",
+											"{\r",
+											"    let json = pm.response.json();\r",
+											"    pm.collectionVariables.set(\"cFileID\", json.fileID);\r",
+											"    console.log(\"Job id = \", json.fileID);\r",
+											"}\r",
+											"else\r",
+											"{\r",
+											"    console.log(\"Job create failed\");\r",
+											"}\r",
+											"\r",
+											"pm.test(\"Status code is 201\", function () {\r",
+											"    pm.response.to.have.status(201);\r",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "file",
+									"file": {
+										"src": "Visual_LFPv0x1_Px1Mio_RGB.tif"
+									}
+								},
+								"url": {
+									"raw": "{{url}}files?filename=Job04.tif",
+									"host": [
+										"{{url}}files"
+									],
+									"query": [
+										{
+											"key": "filename",
+											"value": "Job04.tif"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.2 Create new job",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"if (pm.response.code === 201) ",
+											"{",
+											"    let json = pm.response.json();",
+											"    pm.collectionVariables.set(\"cJobID_04\", json.jobID);",
+											"    console.log(\"Job id = \", json.jobID);",
+											"}",
+											"else ",
+											"{",
+											"    console.log(\"Job create failed\");",
+											"}",
+											"",
+											"pm.test(\"Status code is 201\", function () {",
+											"    pm.response.to.have.status(201);",
+											"});"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"queueName\": \"{{c_queueName}}\",\n    \"hotfolder\": \"{{c_hotfolder}}\",\n    \"fileID\": {{cFileID}},\n    \"settings\": {\n        \"color\": {\n            \"mim\": {\n                \"media\": \"{{c_MimMedia}}\",\n                \"ink\": \"{{c_MimInk}}\",\n                \"metaMode\": \"{{c_MimMetamode}}\"\n            }\n        },\n        \"job\": {\n            \"rotation\": \"Rotate270\",\n            \"scaleX\" : 0.25,\n            \"scaleY\" : 0.25\n        }\n    }\n}"
+								},
+								"url": {
+									"raw": "{{url}}jobs",
+									"host": [
+										"{{url}}jobs"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "4.4.1  POLL STATUS [4.2]",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"function requestTest(){\r",
+											"    pm.test(\"Status code is 200\", function () {\r",
+											"        pm.response.to.have.status(200);\r",
+											"    });\r",
+											"}\r",
+											"\r",
+											"function looping(checks, duration){\r",
+											"\r",
+											"    let json = pm.response.json(); \r",
+											"\r",
+											"    for (let i = 0; i < checks; i++){\r",
+											"        if (json.preview === true && json.status.code === 200) {\r",
+											"            requestTest();\r",
+											"            break;\r",
+											"        }\r",
+											"        else{\r",
+											"            setTimeout(() => {}, duration); \r",
+											"            postman.setNextRequest(pm.info.requestId);\r",
+											"        }\r",
+											"    }\r",
+											"}\r",
+											"\r",
+											"looping(60, 3000);"
+										],
+										"type": "text/javascript"
+									}
+								},
+								{
+									"listen": "prerequest",
+									"script": {
+										"exec": [
+											""
+										],
+										"type": "text/javascript"
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json",
+										"disabled": true
+									}
+								],
+								"url": {
+									"raw": "{{url}}jobs/{{cJobID_04}}/status",
+									"host": [
+										"{{url}}jobs"
+									],
+									"path": [
+										"{{cJobID_04}}",
+										"status"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Container - Create Job 1 2 3",
+			"item": [
+				{
+					"name": "11.1 Create container",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 201) \r",
+									"{\r",
+									"    let json = pm.response.json();\r",
+									"    pm.collectionVariables.set(\"cJobID_Container\", json.jobID);\r",
+									"    console.log(\"Container Job id = \", json.jobID);\r",
+									"}\r",
+									"else \r",
+									"{\r",
+									"    console.log(\"Container create failed\");\r",
+									"}\r",
+									"\r",
+									"\r",
+									"pm.test(\"Status code is 201\", function () {\r",
+									"    pm.response.to.have.status(201);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jobs\": [\r\n        \"{{cJobID_01}}\", \"{{cJobID_02}}\", \"{{cJobID_03}}\"\r\n    ],\r\n    \"settings\": {\r\n        \"job\": {\r\n            \"jobName\": \"Container-Job123\"\r\n        },\r\n        \"printer\": {\r\n            \"mediaWidth\": 1000,\r\n            \"mediaHeight\": 1000\r\n        },\r\n        \"container\": {\r\n            \"arrangeMethod\": \"EDGE2EDGE\",\r\n            \"jobDistanceX\": 30.5,\r\n            \"jobDistanceY\": 15,\r\n            \"fixedSize\": true,\r\n            \"width\": 800,\r\n            \"height\": 500,\r\n            \"marginTop\": 50,\r\n            \"marginLeft\": 100,\r\n            \"copyCount\": 1,\r\n            \"alignX\": \"Left\",\r\n            \"copyDistX\": 55,\r\n            \"copyDistY\": 66\r\n        }\r\n    }\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}container",
+							"host": [
+								"{{url}}container"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.4.1  POLL STATUS [11.1]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"function requestTest(){\r",
+									"    pm.test(\"Status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"function looping(checks, duration){\r",
+									"\r",
+									"    let json = pm.response.json(); \r",
+									"\r",
+									"    for (let i = 0; i < checks; i++){\r",
+									"        if (json.preview === true && json.status.code === 200) {\r",
+									"            requestTest();\r",
+									"            break;\r",
+									"        }\r",
+									"        else{\r",
+									"            setTimeout(() => {}, duration); \r",
+									"            postman.setNextRequest(pm.info.requestId);\r",
+									"        }\r",
+									"    }\r",
+									"}\r",
+									"\r",
+									"looping(60, 3000);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{url}}jobs/{{cJobID_Container}}/status",
+							"host": [
+								"{{url}}jobs"
+							],
+							"path": [
+								"{{cJobID_Container}}",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "11.2.1 Get job list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Container with 3 jobs\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.jobs.length).to.eql(3);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}container/{{cJobID_Container}}/jobs",
+							"host": [
+								"{{url}}container"
+							],
+							"path": [
+								"{{cJobID_Container}}",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Container - Add Job 4",
+			"item": [
+				{
+					"name": "11.3.1 Add jobs",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"jobs\": [\r\n\t\t\"{{cJobID_04}}\"\r\n\t]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}container/{{cJobID_Container}}/jobs",
+							"host": [
+								"{{url}}container"
+							],
+							"path": [
+								"{{cJobID_Container}}",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.4.1  POLL STATUS [11.3.1]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"function requestTest(){\r",
+									"    pm.test(\"Status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"function looping(checks, duration){\r",
+									"\r",
+									"    let json = pm.response.json(); \r",
+									"\r",
+									"    for (let i = 0; i < checks; i++){\r",
+									"        if (json.preview === true && json.status.code === 200) {\r",
+									"            requestTest();\r",
+									"            break;\r",
+									"        }\r",
+									"        else{\r",
+									"            setTimeout(() => {}, duration); \r",
+									"            postman.setNextRequest(pm.info.requestId);\r",
+									"        }\r",
+									"    }\r",
+									"}\r",
+									"\r",
+									"looping(60, 3000);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{url}}jobs/{{cJobID_Container}}/status",
+							"host": [
+								"{{url}}jobs"
+							],
+							"path": [
+								"{{cJobID_Container}}",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "11.2.1 Get job list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Container with 4 jobs\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.jobs.length).to.eql(4);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}container/{{cJobID_Container}}/jobs",
+							"host": [
+								"{{url}}container"
+							],
+							"path": [
+								"{{cJobID_Container}}",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Container - Change Position 4 3 2 1",
+			"item": [
+				{
+					"name": "11.3.3 Change positions Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"jobs\": [\r\n        {\r\n            \"jobID\": \"{{cJobID_04}}\",\r\n            \"x\": 10.0,\r\n            \"y\": 10.0\r\n        },\r\n        {\r\n            \"jobID\": \"{{cJobID_03}}\",\r\n            \"x\": 10.0,\r\n            \"y\": 40.0\r\n        },\r\n        {\r\n            \"jobID\": \"{{cJobID_02}}\",\r\n            \"x\": 60.0,\r\n            \"y\": 20.0\r\n        },\r\n        {\r\n            \"jobID\": \"{{cJobID_01}}\",\r\n            \"x\": 130.0,\r\n            \"y\": 5.0\r\n        }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}container/{{cJobID_Container}}/positions",
+							"host": [
+								"{{url}}container"
+							],
+							"path": [
+								"{{cJobID_Container}}",
+								"positions"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.4.1  POLL STATUS [11.3.1]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"function requestTest(){\r",
+									"    pm.test(\"Status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"function looping(checks, duration){\r",
+									"\r",
+									"    let json = pm.response.json(); \r",
+									"\r",
+									"    for (let i = 0; i < checks; i++){\r",
+									"        if (json.preview === true && json.status.code === 200) {\r",
+									"            requestTest();\r",
+									"            break;\r",
+									"        }\r",
+									"        else{\r",
+									"            setTimeout(() => {}, duration); \r",
+									"            postman.setNextRequest(pm.info.requestId);\r",
+									"        }\r",
+									"    }\r",
+									"}\r",
+									"\r",
+									"looping(60, 3000);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{url}}jobs/{{cJobID_Container}}/status",
+							"host": [
+								"{{url}}jobs"
+							],
+							"path": [
+								"{{cJobID_Container}}",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "11.2.1 Get job list",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Container with 4 jobs\", function () {\r",
+									"    var jsonData = pm.response.json();\r",
+									"    pm.expect(jsonData.jobs.length).to.eql(4);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}container/{{cJobID_Container}}/jobs",
+							"host": [
+								"{{url}}container"
+							],
+							"path": [
+								"{{cJobID_Container}}",
+								"jobs"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Container - Auto Arrange",
+			"item": [
+				{
+					"name": "11.3.4 Trigger auto arrange",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n\t\"jobs\": [\r\n\t\t\"f268d74d-0526-4197-9311-0d289ce14d0e\"\r\n\t]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}container/{{cJobID_Container}}/autoArrange",
+							"host": [
+								"{{url}}container"
+							],
+							"path": [
+								"{{cJobID_Container}}",
+								"autoArrange"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.4.1  POLL STATUS [11.3.4]",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"function requestTest(){\r",
+									"    pm.test(\"Status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"function looping(checks, duration){\r",
+									"\r",
+									"    let json = pm.response.json(); \r",
+									"\r",
+									"    for (let i = 0; i < checks; i++){\r",
+									"        if (json.preview === true && json.status.code === 200) {\r",
+									"            requestTest();\r",
+									"            break;\r",
+									"        }\r",
+									"        else{\r",
+									"            setTimeout(() => {}, duration); \r",
+									"            postman.setNextRequest(pm.info.requestId);\r",
+									"        }\r",
+									"    }\r",
+									"}\r",
+									"\r",
+									"looping(60, 3000);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{url}}jobs/{{cJobID_Container}}/status",
+							"host": [
+								"{{url}}jobs"
+							],
+							"path": [
+								"{{cJobID_Container}}",
+								"status"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Container - Split",
+			"item": [
+				{
+					"name": "11.4.2 Split container",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Collection reset\", function () {\r",
+									"    pm.collectionVariables.set(\"cFileID\", \"\");\r",
+									"    pm.collectionVariables.set(\"cJobID_Container\", \"\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}container/{{cJobID_Container}}",
+							"host": [
+								"{{url}}container"
+							],
+							"path": [
+								"{{cJobID_Container}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Delete Jobs",
+			"item": [
+				{
+					"name": "4.4.1  POLL STATUS [4.2] Copy",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"function requestTest(){\r",
+									"    pm.test(\"Status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"function looping(checks, duration){\r",
+									"\r",
+									"    let json = pm.response.json(); \r",
+									"\r",
+									"    for (let i = 0; i < checks; i++){\r",
+									"        if (json.preview === true && json.status.code === 200) {\r",
+									"            requestTest();\r",
+									"            break;\r",
+									"        }\r",
+									"        else{\r",
+									"            setTimeout(() => {}, duration); \r",
+									"            postman.setNextRequest(pm.info.requestId);\r",
+									"        }\r",
+									"    }\r",
+									"}\r",
+									"\r",
+									"looping(60, 3000);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{url}}jobs/{{cJobID_01}}/status",
+							"host": [
+								"{{url}}jobs"
+							],
+							"path": [
+								"{{cJobID_01}}",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.3 Delete job 1",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Collection reset\", function () {\r",
+									"    pm.collectionVariables.set(\"cFileID\", \"\");\r",
+									"    pm.collectionVariables.set(\"cJobID_01\", \"\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}jobs/{{cJobID_01}}",
+							"host": [
+								"{{url}}jobs"
+							],
+							"path": [
+								"{{cJobID_01}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.4.1  POLL STATUS [4.2] Copy 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"function requestTest(){\r",
+									"    pm.test(\"Status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"function looping(checks, duration){\r",
+									"\r",
+									"    let json = pm.response.json(); \r",
+									"\r",
+									"    for (let i = 0; i < checks; i++){\r",
+									"        if (json.preview === true && json.status.code === 200) {\r",
+									"            requestTest();\r",
+									"            break;\r",
+									"        }\r",
+									"        else{\r",
+									"            setTimeout(() => {}, duration); \r",
+									"            postman.setNextRequest(pm.info.requestId);\r",
+									"        }\r",
+									"    }\r",
+									"}\r",
+									"\r",
+									"looping(60, 3000);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{url}}jobs/{{cJobID_02}}/status",
+							"host": [
+								"{{url}}jobs"
+							],
+							"path": [
+								"{{cJobID_02}}",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.3 Delete job 2",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Collection reset\", function () {\r",
+									"    pm.collectionVariables.set(\"cFileID\", \"\");\r",
+									"    pm.collectionVariables.set(\"cJobID_02\", \"\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}jobs/{{cJobID_02}}",
+							"host": [
+								"{{url}}jobs"
+							],
+							"path": [
+								"{{cJobID_02}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.4.1  POLL STATUS [4.2] Copy 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"function requestTest(){\r",
+									"    pm.test(\"Status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"function looping(checks, duration){\r",
+									"\r",
+									"    let json = pm.response.json(); \r",
+									"\r",
+									"    for (let i = 0; i < checks; i++){\r",
+									"        if (json.preview === true && json.status.code === 200) {\r",
+									"            requestTest();\r",
+									"            break;\r",
+									"        }\r",
+									"        else{\r",
+									"            setTimeout(() => {}, duration); \r",
+									"            postman.setNextRequest(pm.info.requestId);\r",
+									"        }\r",
+									"    }\r",
+									"}\r",
+									"\r",
+									"looping(60, 3000);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{url}}jobs/{{cJobID_03}}/status",
+							"host": [
+								"{{url}}jobs"
+							],
+							"path": [
+								"{{cJobID_03}}",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.3 Delete job 3",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Collection reset\", function () {\r",
+									"    pm.collectionVariables.set(\"cFileID\", \"\");\r",
+									"    pm.collectionVariables.set(\"cJobID_03\", \"\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}jobs/{{cJobID_03}}",
+							"host": [
+								"{{url}}jobs"
+							],
+							"path": [
+								"{{cJobID_03}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.4.1  POLL STATUS [4.2] Copy 4",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"function requestTest(){\r",
+									"    pm.test(\"Status code is 200\", function () {\r",
+									"        pm.response.to.have.status(200);\r",
+									"    });\r",
+									"}\r",
+									"\r",
+									"function looping(checks, duration){\r",
+									"\r",
+									"    let json = pm.response.json(); \r",
+									"\r",
+									"    for (let i = 0; i < checks; i++){\r",
+									"        if (json.preview === true && json.status.code === 200) {\r",
+									"            requestTest();\r",
+									"            break;\r",
+									"        }\r",
+									"        else{\r",
+									"            setTimeout(() => {}, duration); \r",
+									"            postman.setNextRequest(pm.info.requestId);\r",
+									"        }\r",
+									"    }\r",
+									"}\r",
+									"\r",
+									"looping(60, 3000);"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"disabled": true
+							}
+						],
+						"url": {
+							"raw": "{{url}}jobs/{{cJobID_04}}/status",
+							"host": [
+								"{{url}}jobs"
+							],
+							"path": [
+								"{{cJobID_04}}",
+								"status"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "4.3 Delete job 4",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"pm.test(\"Collection reset\", function () {\r",
+									"    pm.collectionVariables.set(\"cFileID\", \"\");\r",
+									"    pm.collectionVariables.set(\"cJobID_04\", \"\");\r",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{url}}jobs/{{cJobID_04}}",
+							"host": [
+								"{{url}}jobs"
+							],
+							"path": [
+								"{{cJobID_04}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"auth": {
+		"type": "basic",
+		"basic": [
+			{
+				"key": "username",
+				"value": "pieper",
+				"type": "string"
+			},
+			{
+				"key": "password",
+				"value": "1234",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "c_queueName",
+			"value": "Printer RestAPI"
+		},
+		{
+			"key": "c_hotfolder",
+			"value": "Printer RestAPI",
+			"type": "string"
+		},
+		{
+			"key": "c_MimMedia",
+			"value": "RestAPI Media",
+			"type": "string"
+		},
+		{
+			"key": "c_MimInk",
+			"value": "RestAPI Ink",
+			"type": "string"
+		},
+		{
+			"key": "c_MimMetamode",
+			"value": "RestAPI_CMYK_Default",
+			"type": "string"
+		},
+		{
+			"key": "cFileID",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "cJobID_01",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "cJobID_02",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "cJobID_03",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "cJobID_04",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "cJobID_Container",
+			"value": "",
+			"type": "string"
+		},
+		{
+			"key": "cJobID",
+			"value": ""
+		},
+		{
+			"key": "Outputname",
+			"value": ""
+		},
+		{
+			"key": "cJobIDprint",
+			"value": ""
+		}
+	]
+}
